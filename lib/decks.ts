@@ -381,6 +381,16 @@ const verbs: Question[] = [
   { id: 23, category: "Nienawidzić — to hate", question: "I hate waiting in long lines.", answer: "Nienawidzę czekać w długich kolejkach." },
   { id: 24, category: "Niszczyć — to destroy", question: "Children shouldn’t destroy their toys.", answer: "Dzieci nie powinny niszczyć swoich zabawek." },
   { id: 25, category: "Niszczyć — to destroy", question: "We need to destroy old company documents.", answer: "Musimy niszczyć stare dokumenty firmowe." },
+  { id: 26, category: "Nieść — to carry", question: "I am carrying the boxes upstairs.", answer: "Niosę pudełka na górę." },
+  { id: 27, category: "Kopać — to kick, dig", question: "The children are kicking a ball in the garden.", answer: "Dzieci kopią piłkę w ogrodzie." },
+  { id: 28, category: "Skakać — to jump", question: "The dog likes to jump over the fence.", answer: "Pies lubi skakać przez płot." },
+  { id: 29, category: "Łapać — to catch", question: "Can you catch the ball?", answer: "Czy możesz złapać piłkę?" },
+  { id: 30, category: "Uderzać — to hit", question: "Be careful not to hit your head on the shelf.", answer: "Uważaj, żeby nie uderzyć głową w półkę." },
+  { id: 31, category: "Rzucać — to throw", question: "Please don't throw your clothes on the floor.", answer: "Proszę, nie rzucaj ubrań na podłogę." },
+  { id: 32, category: "Ciągnąć — to pull", question: "You have to pull the door towards you.", answer: "Musisz pociągnąć drzwi do siebie." },
+  { id: 33, category: "Pchać — to push", question: "Please push the button to open the door.", answer: "Naciśnij przycisk, żeby otworzyć drzwi." },
+  { id: 34, category: "Podnosić — to lift, pick up", question: "I can't lift this heavy suitcase alone.", answer: "Nie mogę sam podnieść tej ciężkiej walizki." },
+  { id: 35, category: "Odłożyć — to put back, set aside", question: "Please put the book back on the shelf.", answer: "Proszę odłożyć książkę na półkę." },
 ]
 
 export const decks: Deck[] = [
