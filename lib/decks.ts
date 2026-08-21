@@ -355,7 +355,43 @@ const gettingAround: Question[] = [
   { id: 12, category: "Getting around", question: "Can you tell me when to get off?", answer: "Czy może mi pan powiedzieć, kiedy wysiąść?" },
 ]
 
+const verbs: Question[] = [
+  { id: 1, category: "Odwiedzać — to visit", question: "I often visit my family on weekends.", answer: "Często odwiedzam rodzinę w weekendy." },
+  { id: 2, category: "Odwiedzać — to visit", question: "I rarely visit friends because everyone is busy with work.", answer: "Rzadko odwiedzam znajomych, bo wszyscy są zajęci pracą." },
+  { id: 3, category: "Zwiedzać — to explore", question: "Yesterday I toured the new contemporary art museum.", answer: "Wczoraj zwiedzałem nowe muzeum sztuki współczesnej." },
+  { id: 4, category: "Zwiedzać — to explore", question: "I like to explore cities on foot because I see the most that way.", answer: "Lubię zwiedzać miasta pieszo, bo wtedy widzę najwięcej." },
+  { id: 5, category: "Dzielić — to share", question: "I like to share food with my friends.", answer: "Lubię dzielić się jedzeniem z przyjaciółmi." },
+  { id: 6, category: "Dzielić — to share", question: "We need to share the responsibilities at home equally.", answer: "Musimy równo dzielić obowiązki w domu." },
+  { id: 7, category: "Dzielić — to share", question: "When I was a child, I had to share a room with my brother.", answer: "Kiedy byłem dzieckiem, musiałem dzielić pokój z bratem." },
+  { id: 8, category: "Kłaść — to put, place", question: "I’m putting the book on the table.", answer: "Kładę książkę na stole." },
+  { id: 9, category: "Kłaść — to put, place", question: "Every day I put the plates on the table before dinner.", answer: "Codziennie kładę talerze na stół przed kolacją." },
+  { id: 10, category: "Kłaść — to put, place", question: "I usually go to bed at midnight.", answer: "Zwykle kładę się spać o północy." },
+  { id: 11, category: "Narzekać — to complain", question: "He always complains about food in restaurants.", answer: "On zawsze narzeka na jedzenie w restauracjach." },
+  { id: 12, category: "Narzekać — to complain", question: "Recently he’s been complaining about his health.", answer: "Ostatnio często narzeka na zdrowie." },
+  { id: 13, category: "Narzekać — to complain", question: "Stop complaining about the situation and try to change something.", answer: "Przestań narzekać na sytuację i spróbuj coś zmienić." },
+  { id: 14, category: "Nosić — to carry, wear", question: "I like wearing comfortable clothes.", answer: "Lubię nosić wygodne ubrania." },
+  { id: 15, category: "Nosić — to carry, wear", question: "I always carry my bag on my left hand.", answer: "Zawsze noszę torbę na lewej ręce." },
+  { id: 16, category: "Wynosić — to take out", question: "I have to take out the trash every other day.", answer: "Muszę wynosić śmieci co drugi dzień." },
+  { id: 17, category: "Wynosić — to take out", question: "I’ll help you carry things out of the car.", answer: "Pomogę ci wynosić rzeczy z samochodu." },
+  { id: 18, category: "Odkrywać — to discover", question: "I like discovering new places in the city.", answer: "Lubię odkrywać nowe miejsca w mieście." },
+  { id: 19, category: "Odkrywać — to discover", question: "The teacher helped him discover his talent for music.", answer: "Nauczyciel pomógł mu odkrywać jego talent do muzyki." },
+  { id: 20, category: "Poznawać — to meet, learn", question: "I enjoy meeting new people at events.", answer: "Lubię poznawać nowych ludzi na wydarzeniach." },
+  { id: 21, category: "Poznawać — to meet, learn", question: "I’m learning Polish step by step.", answer: "Poznaję polski krok po kroku." },
+  { id: 22, category: "Nienawidzić — to hate", question: "He hates winter because he’s always cold.", answer: "On nienawidzi zimy, bo zawsze marznie." },
+  { id: 23, category: "Nienawidzić — to hate", question: "I hate waiting in long lines.", answer: "Nienawidzę czekać w długich kolejkach." },
+  { id: 24, category: "Niszczyć — to destroy", question: "Children shouldn’t destroy their toys.", answer: "Dzieci nie powinny niszczyć swoich zabawek." },
+  { id: 25, category: "Niszczyć — to destroy", question: "We need to destroy old company documents.", answer: "Musimy niszczyć stare dokumenty firmowe." },
+]
+
 export const decks: Deck[] = [
+  {
+    slug: "verbs",
+    title: "Verbs (czasowniki)",
+    description: "Learn useful Polish verbs through natural, everyday sentences.",
+    emoji: "book",
+    accent: "oklch(0.55 0.16 260)",
+    questions: verbs,
+  },
   {
     slug: "useful-sentences",
     title: "Useful sentences",
