@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import type { Question } from "@/lib/decks"
 
+type Direction = "left" | "right"
 type Result = { correct: number; wrong: number }
 
 const SWIPE_THRESHOLD = 120
@@ -17,7 +18,14 @@ export function QuizDeck({ questions, title }: { questions: Question[]; title: s
   const [flipped, setFlipped] = useState(false)
   const [drag, setDrag] = useState(0)
   const [leaving, setLeaving] = useState<"left" | "right" | null>(null)
-  const [result, setResult] = useState<Result>({ correct: 0, wrong: 0 })
+  const [answers, setAnswers] = useState<Record<number, Direction>>({})
+  const result = useMemo<Result>(() => {
+    const values = Object.values(answers)
+    return {
+      correct: values.filter((answer) => answer === "left").length,
+      wrong: values.filter((answer) => answer === "right").length,
+    }
+  }, [answers])
 
   const dragging = useRef(false)
   const startX = useRef(0)
@@ -27,12 +35,9 @@ export function QuizDeck({ questions, title }: { questions: Question[]; title: s
   const total = questions.length
   const finished = index >= total
 
-  const commit = useCallback((direction: "left" | "right") => {
+  const commit = useCallback((direction: Direction) => {
+    setAnswers((currentAnswers) => ({ ...currentAnswers, [index]: direction }))
     setLeaving(direction)
-    setResult((r) => ({
-      correct: r.correct + (direction === "left" ? 1 : 0),
-      wrong: r.wrong + (direction === "right" ? 1 : 0),
-    }))
     // let the exit animation play, then advance to the next card
     window.setTimeout(() => {
       setIndex((i) => i + 1)
@@ -40,7 +45,7 @@ export function QuizDeck({ questions, title }: { questions: Question[]; title: s
       setDrag(0)
       setLeaving(null)
     }, 260)
-  }, [])
+  }, [index])
 
   const onPointerDown = (e: React.PointerEvent) => {
     if (leaving) return
@@ -77,7 +82,7 @@ export function QuizDeck({ questions, title }: { questions: Question[]; title: s
     setFlipped(false)
     setDrag(0)
     setLeaving(null)
-    setResult({ correct: 0, wrong: 0 })
+    setAnswers({})
   }
 
   const cardStyle = useMemo(() => {
@@ -103,7 +108,14 @@ export function QuizDeck({ questions, title }: { questions: Question[]; title: s
     setFlipped(false)
     setDrag(0)
     setLeaving(null)
-    setResult({ correct: 0, wrong: 0 })
+    setAnswers({})
+  }
+
+  const goToPrevious = () => {
+    if (index === 0 || leaving) return
+    setIndex((currentIndex) => currentIndex - 1)
+    setFlipped(false)
+    setDrag(0)
   }
 
   const finishEarly = () => {
@@ -143,7 +155,7 @@ export function QuizDeck({ questions, title }: { questions: Question[]; title: s
           <ArrowLeft className="size-4 rotate-180" />
         </Button>
         <Button asChild variant="ghost" className="w-full gap-2 text-muted-foreground">
-          <Link href="/"><ArrowLeft className="size-4" /> All decks</Link>
+          <Link href="/" className="inline-flex items-center justify-center gap-2"><ArrowLeft className="size-4" /> All decks</Link>
         </Button>
       </div>
     )
@@ -192,9 +204,14 @@ export function QuizDeck({ questions, title }: { questions: Question[]; title: s
   return (
     <div className="flex w-full max-w-sm flex-col items-center gap-6">
       <div className="flex w-full items-center justify-between">
-        <Button variant="ghost" size="sm" onClick={backToOverview} className="gap-1.5 px-2 text-muted-foreground">
-          <ArrowLeft className="size-4" /> Questions
-        </Button>
+        <div className="flex items-center gap-1">
+          <Button variant="ghost" size="sm" onClick={backToOverview} className="gap-1.5 px-2 text-muted-foreground">
+            <ArrowLeft className="size-4" /> Questions
+          </Button>
+          <Button variant="ghost" size="sm" onClick={goToPrevious} disabled={index === 0} className="gap-1.5 px-2 text-muted-foreground">
+            <ArrowLeft className="size-4" /> Back
+          </Button>
+        </div>
         <Button variant="ghost" size="sm" onClick={finishEarly} className="gap-1.5 px-2 text-muted-foreground">
           <Flag className="size-4" /> Finish early
         </Button>
