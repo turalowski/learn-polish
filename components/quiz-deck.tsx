@@ -2,21 +2,30 @@
 
 import { useCallback, useMemo, useRef, useState } from "react"
 import Link from "next/link"
-import { Check, RotateCcw, X, MousePointerClick, ArrowLeft } from "lucide-react"
+import { Check, RotateCcw, X, MousePointerClick, ArrowLeft, ListChecks, Flag } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import type { Question } from "@/lib/decks"
 
+type Direction = "left" | "right"
 type Result = { correct: number; wrong: number }
 
 const SWIPE_THRESHOLD = 120
 
 export function QuizDeck({ questions, title }: { questions: Question[]; title: string }) {
+  const [started, setStarted] = useState(false)
   const [index, setIndex] = useState(0)
   const [flipped, setFlipped] = useState(false)
   const [drag, setDrag] = useState(0)
   const [leaving, setLeaving] = useState<"left" | "right" | null>(null)
-  const [result, setResult] = useState<Result>({ correct: 0, wrong: 0 })
+  const [answers, setAnswers] = useState<Record<number, Direction>>({})
+  const result = useMemo<Result>(() => {
+    const values = Object.values(answers)
+    return {
+      correct: values.filter((answer) => answer === "left").length,
+      wrong: values.filter((answer) => answer === "right").length,
+    }
+  }, [answers])
 
   const dragging = useRef(false)
   const startX = useRef(0)
@@ -26,12 +35,9 @@ export function QuizDeck({ questions, title }: { questions: Question[]; title: s
   const total = questions.length
   const finished = index >= total
 
-  const commit = useCallback((direction: "left" | "right") => {
+  const commit = useCallback((direction: Direction) => {
+    setAnswers((currentAnswers) => ({ ...currentAnswers, [index]: direction }))
     setLeaving(direction)
-    setResult((r) => ({
-      correct: r.correct + (direction === "left" ? 1 : 0),
-      wrong: r.wrong + (direction === "right" ? 1 : 0),
-    }))
     // let the exit animation play, then advance to the next card
     window.setTimeout(() => {
       setIndex((i) => i + 1)
@@ -39,7 +45,7 @@ export function QuizDeck({ questions, title }: { questions: Question[]; title: s
       setDrag(0)
       setLeaving(null)
     }, 260)
-  }, [])
+  }, [index])
 
   const onPointerDown = (e: React.PointerEvent) => {
     if (leaving) return
@@ -71,11 +77,12 @@ export function QuizDeck({ questions, title }: { questions: Question[]; title: s
   }
 
   const restart = () => {
+    setStarted(false)
     setIndex(0)
     setFlipped(false)
     setDrag(0)
     setLeaving(null)
-    setResult({ correct: 0, wrong: 0 })
+    setAnswers({})
   }
 
   const cardStyle = useMemo(() => {
@@ -95,6 +102,65 @@ export function QuizDeck({ questions, title }: { questions: Question[]; title: s
 
   const intent = drag <= -40 ? "correct" : drag >= 40 ? "wrong" : null
 
+  const backToOverview = () => {
+    setStarted(false)
+    setIndex(0)
+    setFlipped(false)
+    setDrag(0)
+    setLeaving(null)
+    setAnswers({})
+  }
+
+  const goToPrevious = () => {
+    if (index === 0 || leaving) return
+    setIndex((currentIndex) => currentIndex - 1)
+    setFlipped(false)
+    setDrag(0)
+  }
+
+  const finishEarly = () => {
+    setIndex(total)
+    setFlipped(false)
+    setDrag(0)
+    setLeaving(null)
+  }
+
+  if (!started) {
+    return (
+      <div className="flex w-full max-w-sm flex-col gap-5">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-muted-foreground">{total} cards</p>
+            <h2 className="mt-1 text-xl font-semibold tracking-tight text-foreground">Before you start</h2>
+          </div>
+          <ListChecks className="size-6 text-primary" />
+        </div>
+        <div className="max-h-[58svh] overflow-y-auto rounded-2xl border border-border bg-card">
+          <ol className="divide-y divide-border">
+            {questions.map((question, questionIndex) => (
+              <li key={question.id} className="flex gap-3 p-4">
+                <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-secondary text-xs font-semibold text-secondary-foreground">
+                  {questionIndex + 1}
+                </span>
+                <div className="min-w-0">
+                  <p className="text-xs font-medium text-muted-foreground">{question.category}</p>
+                  <p className="mt-1 text-sm leading-6 text-card-foreground">{question.question}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+        <Button onClick={() => setStarted(true)} size="lg" className="w-full gap-2">
+          Start quiz
+          <ArrowLeft className="size-4 rotate-180" />
+        </Button>
+        <Button asChild variant="ghost" className="w-full gap-2 text-muted-foreground">
+          <Link href="/" className="inline-flex items-center justify-center gap-2"><ArrowLeft className="size-4" /> All decks</Link>
+        </Button>
+      </div>
+    )
+  }
+
   if (finished) {
     return (
       <div className="flex w-full max-w-sm flex-col items-center gap-6 text-center">
@@ -102,8 +168,12 @@ export function QuizDeck({ questions, title }: { questions: Question[]; title: s
           <Check className="size-8" />
         </div>
         <div className="space-y-1">
-          <h2 className="text-2xl font-semibold tracking-tight text-foreground">Deck complete</h2>
-          <p className="text-sm text-muted-foreground">You went through all {total} cards.</p>
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground">{index === total && result.correct + result.wrong < total ? "Quiz paused" : "Deck complete"}</h2>
+          <p className="text-sm text-muted-foreground">
+            {index === total && result.correct + result.wrong < total
+              ? `You answered ${result.correct + result.wrong} of ${total} cards.`
+              : `You went through all ${total} cards.`}
+          </p>
         </div>
         <div className="flex w-full gap-3">
           <div className="flex-1 rounded-2xl border border-border bg-card p-4">
@@ -133,6 +203,20 @@ export function QuizDeck({ questions, title }: { questions: Question[]; title: s
 
   return (
     <div className="flex w-full max-w-sm flex-col items-center gap-6">
+      <div className="flex w-full items-center justify-between">
+        <div className="flex items-center gap-1">
+          <Button variant="ghost" size="sm" onClick={backToOverview} className="gap-1.5 px-2 text-muted-foreground">
+            <ArrowLeft className="size-4" /> Questions
+          </Button>
+          <Button variant="ghost" size="sm" onClick={goToPrevious} disabled={index === 0} className="gap-1.5 px-2 text-muted-foreground">
+            <ArrowLeft className="size-4" /> Back
+          </Button>
+        </div>
+        <Button variant="ghost" size="sm" onClick={finishEarly} className="gap-1.5 px-2 text-muted-foreground">
+          <Flag className="size-4" /> Finish early
+        </Button>
+      </div>
+
       {/* Progress */}
       <div className="flex w-full items-center justify-between text-sm">
         <span className="font-medium text-muted-foreground">
